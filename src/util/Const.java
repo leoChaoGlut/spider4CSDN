@@ -23,5 +23,6 @@ public class Const {
 		public static final String POST_DATE = ".article_manage .link_postdate";
 		public static final String VIEW = ".article_manage .link_view";
 		public static final String COMMENT = ".article_manage .link_comments";
+		public static final String PAGE_LIST = "#papelist";
 	}
 }

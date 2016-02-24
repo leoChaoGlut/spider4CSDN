@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 
 import bean.Article;
 import bean.Total;
+import util.Const.Dom;
 import util.Const.Header;
 
 /**
@@ -88,7 +89,7 @@ public class Spider {
 		threadPool.shutdown();
 		while (!threadPool.isTerminated())
 			;
-
+ 
 		sortArticles(articleCount, futureTasks);
 
 	}
@@ -121,7 +122,7 @@ public class Spider {
 		Total total = null;
 		try {
 			doc = Jsoup.connect(url).header(Header.KEY, Header.VALUE).get();
-			String text = doc.select("#papelist").text();
+			String text = doc.select(Dom.PAGE_LIST).text();
 			StringBuffer sb = new StringBuffer(text);
 			int articleCount = Integer.valueOf(sb.substring(0, sb.indexOf("条")));
 			int pageCount = Integer.valueOf(sb.substring(sb.indexOf("共") + 1, sb.indexOf("页")));

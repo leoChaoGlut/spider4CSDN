@@ -64,6 +64,9 @@ public class Spidering implements Callable<List<Article>> {
 			String postdate = articleDom.select(Dom.POST_DATE).text();
 			String view = articleDom.select(Dom.VIEW).text();
 
+			link = link.substring(link.lastIndexOf("/") + 1);
+			view = view.substring(view.indexOf("(") + 1, view.indexOf(")"));
+
 			Article article = new Article(title, description, postdate, view, link);
 
 			articles.add(article);

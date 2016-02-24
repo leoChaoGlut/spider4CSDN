@@ -26,14 +26,20 @@ public class Article {
 	/**
 	 * 文章详情链接
 	 */
-	private String link;
+	private String articleCode;
 
-	public Article(String title, String description, String postDate, String view, String link) {
+	private String content;
+
+	public Article() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Article(String title, String description, String postDate, String view, String articleCode) {
 		this.title = title;
 		this.description = description;
 		this.postDate = postDate;
 		this.view = view;
-		this.link = link;
+		this.articleCode = articleCode;
 	}
 
 	public String getTitle() {
@@ -68,18 +74,26 @@ public class Article {
 		this.view = view;
 	}
 
-	public String getLink() {
-		return link;
+	public String getArticleCode() {
+		return articleCode;
 	}
 
-	public void setLink(String link) {
-		this.link = link;
+	public void setArticleCode(String articleCode) {
+		this.articleCode = articleCode;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	@Override
 	public String toString() {
 		return "Article [title=" + title + ", description=" + description + ", postDate=" + postDate + ", view=" + view
-				+ ", link=" + link + "]";
+				+ ", articleCode=" + articleCode + ", content=" + content + "]";
 	}
 
 }
