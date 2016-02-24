@@ -1,7 +1,7 @@
 # spider4CSDN
 可根据csdn用户名爬取他名下的所有博客信息
 用法:
-	public void test(){	
+	
 		String userId="lc0817";
 		
 		Spider spider = new Spider(userId);
@@ -15,4 +15,4 @@
 		}
 
 		System.out.println(articles.size());//文章总数
-	}
+	
