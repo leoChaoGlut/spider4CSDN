@@ -1,5 +1,9 @@
 package util;
 
+import static util.Const.PAGE;
+import static util.Const.PREFIX;
+import static util.Const.SUFFIX;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -10,12 +14,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import bean.Article;
-import util.Const.*;
+import util.Const.Dom;
+import util.Const.Header;
 
-import static util.Const.*;
-
+/**
+ * 
+ * @author leo
+ * @Date 2016年2月24日
+ * @Comments 实现了callable接口,适用多线程爬取数据.
+ */
 public class Spidering implements Callable<List<Article>> {
+	/**
+	 * 用户id
+	 */
 	String userId;
+	/**
+	 * 分页
+	 */
 	String pageIndex;
 
 	public Spidering() {
@@ -27,6 +42,9 @@ public class Spidering implements Callable<List<Article>> {
 		this.pageIndex = pageIndex;
 	}
 
+	/**
+	 * 具体处理逻辑
+	 */
 	@Override
 	public List<Article> call() throws Exception {
 		// TODO Auto-generated method stub
@@ -34,7 +52,7 @@ public class Spidering implements Callable<List<Article>> {
 		Document doc = Jsoup.connect(url).header(Header.KEY, Header.VALUE).get();
 		Elements articleDoms = doc.select(Dom.ARTICLE);
 		int len = articleDoms.size();
-		List<Article> articles = new ArrayList<>(len + 1);
+		List<Article> articles = new ArrayList<>(len);
 
 		for (int articleIndex = 0; articleIndex < len; articleIndex++) {
 			Element articleDom = articleDoms.get(articleIndex);

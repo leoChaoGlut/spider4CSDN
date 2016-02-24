@@ -1,7 +1,19 @@
 package bean;
 
+/**
+ * 
+ * @author leo
+ * @Date 2016年2月24日
+ * @Comments 存储文章总数和分页总数
+ */
 public class Total {
+	/**
+	 * 文章总数
+	 */
 	private int articleCount;
+	/**
+	 * 分页总数
+	 */
 	private int pageCount;
 
 	public Total() {

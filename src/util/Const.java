@@ -1,5 +1,11 @@
 package util;
 
+/**
+ * 
+ * @author leo
+ * @Date 2016年2月24日
+ * @Comments 常量
+ */
 public class Const {
 	public static final String PREFIX = "http://blog.csdn.net/";
 	public static final String SUFFIX = "?viewmode=list";
