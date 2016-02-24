@@ -1,7 +1,6 @@
 # spider4CSDN
 可根据csdn用户名爬取他名下的所有博客信息
-
-Example:
+用法:
 	public void test() {
 		String userId="lc0817";
 		
