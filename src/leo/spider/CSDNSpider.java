@@ -35,7 +35,7 @@ public class CSDNSpider implements ISpider {
 	private List<Category> categoryList;
 	private List<Article> articleList;
 
-	private final int TIME_OUT = 5000;
+	private final int TIME_OUT = 8000;
 
 	private CSDNSpider() {
 	}
@@ -67,10 +67,12 @@ public class CSDNSpider implements ISpider {
 		List<Category> categoryList = new ArrayList<>(categoryCount);
 		for (int i = 0; i < categoryCount; i++) {
 			Element categoryElem = categoryElems.get(i);
+			String categoryId = categoryElem.select("a").attr("href")
+					.substring(categoryElem.select("a").attr("href").lastIndexOf("/") + 1);
 			String categoryName = categoryElem.select("a").text();
 			int articleCount = Integer.valueOf(
 					categoryElem.select("span").text().substring(1, categoryElem.select("span").text().length() - 1));
-			Category category = new Category(categoryName, articleCount);
+			Category category = new Category(categoryId, categoryName, articleCount);
 			categoryList.add(category);
 		}
 		return categoryList;
