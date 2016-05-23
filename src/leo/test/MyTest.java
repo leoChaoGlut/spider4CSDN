@@ -2,11 +2,15 @@ package leo.test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,7 +24,9 @@ import com.alibaba.fastjson.JSON;
 
 import leo.bean.Article;
 import leo.bean.Category;
+import leo.bean.CategoryAndArticle;
 import leo.mapper.IArticleMapper;
+import leo.mapper.ICategoryAndArticleMapper;
 import leo.mapper.ICategoryMapper;
 import leo.spider.CSDNSpider;
 import leo.util.SpiderUtil;
@@ -90,17 +96,10 @@ public class MyTest {
 		InputStream inputStream = Resources.getResourceAsStream(resource);
 		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
 		SqlSession session = ssf.openSession(true);
-		IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
-		FileReader fr = new FileReader("C://articleJSON.json");
-		BufferedReader br = new BufferedReader(fr);
-		String line = "";
-		StringBuilder sb = new StringBuilder();
-		while ((line = br.readLine()) != null) {
-			sb.append(line);
-		}
-		List<Article> list = JSON.parseArray(sb.toString(), Article.class);
-		int count = articleMapper.insertList(list);
-		System.out.println(count);
+		ICategoryAndArticleMapper caaMapper = session.getMapper(ICategoryAndArticleMapper.class);
+		List<CategoryAndArticle> list = Arrays.asList(new CategoryAndArticle(1, "c1"), new CategoryAndArticle(1, "c2"),
+				new CategoryAndArticle(1, "c1"));
+		caaMapper.insertList(list);
 	}
 
 	@Test
@@ -122,5 +121,37 @@ public class MyTest {
 		System.out.println(list);
 		int count = caregoryMapper.insertList(list);
 		System.out.println(count);
+	}
+
+	@Test
+	public void test06() throws Exception {
+		String resource = "leo/config/mybatis-config.xml";
+		InputStream inputStream = Resources.getResourceAsStream(resource);
+		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
+		SqlSession session = ssf.openSession(true);
+
+		IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
+		ICategoryMapper categoryMapper = session.getMapper(ICategoryMapper.class);
+	}
+
+	@Test
+	public void test07() throws Exception {
+		String resource = "leo/config/mybatis-config.xml";
+		InputStream is = Resources.getResourceAsStream(resource);
+		InputStreamReader isr = new InputStreamReader(is);
+		isr.close();
+		is.available();
+
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		ois.close();
+
+	}
+
+	@Test
+	public void test08() {
+		CSDNSpider spider = new CSDNSpider("lc0817");
+		String articleContent = spider.getArticleContent(51474157);
+		// System.out.println(articleContent);
 	}
 }

@@ -10,9 +10,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.Test;
 
 import leo.bean.Article;
 import leo.bean.Category;
+import leo.bean.CategoryAndArticle;
 import leo.util.Const.Dom;
 import leo.util.Const.Url;
 import leo.util.Const.ViewMode;
@@ -34,6 +36,8 @@ public class CSDNSpider implements ISpider {
 	private int pageCount;
 	private List<Category> categoryList;
 	private List<Article> articleList;
+
+	private List<CategoryAndArticle> categoryAndArticleList = new ArrayList<>();
 
 	private final int TIME_OUT = 8000;
 
@@ -67,8 +71,8 @@ public class CSDNSpider implements ISpider {
 		List<Category> categoryList = new ArrayList<>(categoryCount);
 		for (int i = 0; i < categoryCount; i++) {
 			Element categoryElem = categoryElems.get(i);
-			String categoryId = categoryElem.select("a").attr("href")
-					.substring(categoryElem.select("a").attr("href").lastIndexOf("/") + 1);
+			int categoryId = Integer.valueOf(categoryElem.select("a").attr("href")
+					.substring(categoryElem.select("a").attr("href").lastIndexOf("/") + 1));
 			String categoryName = categoryElem.select("a").text();
 			int articleCount = Integer.valueOf(
 					categoryElem.select("span").text().substring(1, categoryElem.select("span").text().length() - 1));
@@ -115,11 +119,22 @@ public class CSDNSpider implements ISpider {
 		return article;
 	}
 
-	private String getArticleContent(int articleId) {
+	public String getArticleContent(int articleId) {
 		Document doc = getDocument(Url.PREFIX + userId + Url.ARTICLE_DETAILS + articleId);
+		buildCategoryAndArticle(doc, articleId);
 		Elements articleContentElem = doc.select(Dom.ARTICLE_CONTENT);
 		String content = articleContentElem.html();
 		return content;
+	}
+
+	private void buildCategoryAndArticle(Document doc, int articleId) {
+		Elements categoriesElem = doc.select(Dom.ARTICLE_CATEGORY);
+		for (Element element : categoriesElem) {
+			String categoryName = element.html().substring(0, element.html().indexOf("<em>"));
+			CategoryAndArticle caa = new CategoryAndArticle(articleId, categoryName);
+			System.out.println(caa);
+			categoryAndArticleList.add(caa);
+		}
 	}
 
 	private int getArticleCount(String txt) {
@@ -145,16 +160,18 @@ public class CSDNSpider implements ISpider {
 		return categoryList;
 	}
 
-	public void setCategoryList(List<Category> categoryList) {
-		this.categoryList = categoryList;
-	}
-
 	public List<Article> getArticleList() {
 		return articleList;
 	}
 
-	public void setArticleList(List<Article> articleList) {
-		this.articleList = articleList;
+	public List<CategoryAndArticle> getCategoryAndArticleList() {
+		return categoryAndArticleList;
 	}
 
+	@Test
+	public void test() {
+		CSDNSpider spider = new CSDNSpider("lc0817");
+		String articleContent = spider.getArticleContent(51474157);
+		System.out.println(articleContent);
+	}
 }

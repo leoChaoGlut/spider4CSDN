@@ -4,13 +4,16 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<settings>
-		<setting name="logImpl" value="LOG4J"/>
+		<setting name="logImpl" value="LOG4J" />
 	</settings>
-	
+
 	<typeAliases>
-		<package name="leo.bean" />
+		<!-- <package name="leo.bean" /> -->
+		<typeAlias type="leo.bean.Article" alias="Article" />
+		<typeAlias type="leo.bean.Category" alias="Category" />
+		<typeAlias type="leo.bean.CategoryAndArticle" alias="CategoryAndArticle" />
 	</typeAliases>
-	
+
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC" />
@@ -23,8 +26,11 @@
 			</dataSource>
 		</environment>
 	</environments>
-	
+
 	<mappers>
-		<package name="leo.mapper" />
+		<!-- <package name="leo.mapper" /> -->
+		<mapper class="leo.mapper.IArticleMapper" />
+		<mapper class="leo.mapper.ICategoryMapper" />
+		<mapper class="leo.mapper.ICategoryAndArticleMapper" />
 	</mappers>
 </configuration>

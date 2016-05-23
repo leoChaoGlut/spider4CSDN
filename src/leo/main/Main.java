@@ -13,7 +13,9 @@ import com.alibaba.fastjson.JSON;
 
 import leo.bean.Article;
 import leo.bean.Category;
+import leo.bean.CategoryAndArticle;
 import leo.mapper.IArticleMapper;
+import leo.mapper.ICategoryAndArticleMapper;
 import leo.mapper.ICategoryMapper;
 import leo.spider.CSDNSpider;
 import leo.util.SpiderUtil;
@@ -48,6 +50,7 @@ public class Main {
 
 			List<Article> articleList = spider.getArticleList();
 			List<Category> categoryList = spider.getCategoryList();
+			List<CategoryAndArticle> categoryAndArticleList = spider.getCategoryAndArticleList();
 
 			String articleJsonPath = ppt.getProperty("articleJsonPath");
 			String categoryJsonPath = ppt.getProperty("categoryJsonPath");
@@ -59,11 +62,16 @@ public class Main {
 			InputStream inputStream = Resources.getResourceAsStream(resource);
 			SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
 			SqlSession session = ssf.openSession(true);
+
 			IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
 			ICategoryMapper categoryMapper = session.getMapper(ICategoryMapper.class);
+			ICategoryAndArticleMapper caaMapper = session.getMapper(ICategoryAndArticleMapper.class);
+
 			int articleCount = articleMapper.insertList(articleList);
 			int categoryCount = categoryMapper.insertList(categoryList);
-			System.out.println(articleCount + "," + categoryCount);
+			int caaCount = caaMapper.insertList(categoryAndArticleList);
+
+			System.out.println(articleCount + "," + categoryCount + "," + caaCount);
 
 		} catch (Exception e) {
 			e.printStackTrace();

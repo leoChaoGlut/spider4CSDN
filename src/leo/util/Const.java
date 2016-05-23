@@ -31,6 +31,7 @@ public class Const {
 		public static final String ARTICLE_POST_DATE = ".article_manage .link_postdate";
 		public static final String ARTICLE_VIEW_COUNT = ".article_manage .link_view";
 		public static final String ARTICLE_CONTENT = "#article_content";
+		public static final String ARTICLE_CATEGORY = "#article_details .category .category_r label span";
 
 		public static final String CATEGORY = "#panel_Category .panel_body li";
 	}

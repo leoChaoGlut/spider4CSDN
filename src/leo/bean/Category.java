@@ -7,24 +7,24 @@ package leo.bean;
  * @Usage:
  */
 public class Category {
-	private String id;
+	private Integer id;
 	private String name;
 	private Integer articleCount;
 
 	public Category() {
 	}
 
-	public Category(String id, String name, Integer articleCount) {
+	public Category(Integer id, String name, Integer articleCount) {
 		this.id = id;
 		this.name = name;
 		this.articleCount = articleCount;
 	}
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
