@@ -1,5 +1,6 @@
 package leo.main;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +20,9 @@ import leo.mapper.ICategoryAndArticleMapper;
 import leo.mapper.ICategoryMapper;
 import leo.spider.CSDNSpider;
 import leo.util.SpiderUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * @Description:
@@ -52,30 +56,59 @@ public class Main {
 			List<Category> categoryList = spider.getCategoryList();
 			List<CategoryAndArticle> categoryAndArticleList = spider.getCategoryAndArticleList();
 
-			String articleJsonPath = ppt.getProperty("articleJsonPath");
-			String categoryJsonPath = ppt.getProperty("categoryJsonPath");
+			writeToFile(ppt, articleList, categoryList);
 
-			SpiderUtil.write(articleJsonPath, JSON.toJSONString(articleList));
-			SpiderUtil.write(categoryJsonPath, JSON.toJSONString(categoryList));
+			writeToCache(articleList);
 
-			String resource = "leo/config/mybatis-config.xml";
-			InputStream inputStream = Resources.getResourceAsStream(resource);
-			SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
-			SqlSession session = ssf.openSession(true);
-
-			IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
-			ICategoryMapper categoryMapper = session.getMapper(ICategoryMapper.class);
-			ICategoryAndArticleMapper caaMapper = session.getMapper(ICategoryAndArticleMapper.class);
-
-			int articleCount = articleMapper.insertList(articleList);
-			int categoryCount = categoryMapper.insertList(categoryList);
-			int caaCount = caaMapper.insertList(categoryAndArticleList);
-
-			System.out.println(articleCount + "," + categoryCount + "," + caaCount);
+			writeToDB(articleList, categoryList, categoryAndArticleList);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
+
+	private static void writeToCache(List<Article> articleList) {
+		JedisPoolConfig cfg = new JedisPoolConfig();
+		JedisPool pool = new JedisPool(cfg, "127.0.0.1");
+		Jedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			for (Article article : articleList) {
+				jedis.set(article.getId() + "", article.getContent());
+			}
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		pool.close();
+	}
+
+	private static void writeToFile(Properties ppt, List<Article> articleList, List<Category> categoryList) {
+		String articleJsonPath = ppt.getProperty("articleJsonPath");
+		String categoryJsonPath = ppt.getProperty("categoryJsonPath");
+
+		SpiderUtil.write(articleJsonPath, JSON.toJSONString(articleList));
+		SpiderUtil.write(categoryJsonPath, JSON.toJSONString(categoryList));
+	}
+
+	private static void writeToDB(List<Article> articleList, List<Category> categoryList,
+			List<CategoryAndArticle> categoryAndArticleList) throws IOException {
+		String resource = "leo/config/mybatis-config.xml";
+		InputStream inputStream = Resources.getResourceAsStream(resource);
+		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
+		SqlSession session = ssf.openSession(true);
+
+		IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
+		ICategoryMapper categoryMapper = session.getMapper(ICategoryMapper.class);
+		ICategoryAndArticleMapper caaMapper = session.getMapper(ICategoryAndArticleMapper.class);
+
+		int articleCount = articleMapper.insertList(articleList);
+		int categoryCount = categoryMapper.insertList(categoryList);
+		int caaCount = caaMapper.insertList(categoryAndArticleList);
+
+		System.out.println(articleCount + "," + categoryCount + "," + caaCount);
+	}
+
 }

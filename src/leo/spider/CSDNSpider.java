@@ -10,7 +10,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.junit.Test;
 
 import leo.bean.Article;
 import leo.bean.Category;
@@ -132,7 +131,6 @@ public class CSDNSpider implements ISpider {
 		for (Element element : categoriesElem) {
 			String categoryName = element.html().substring(0, element.html().indexOf("<em>"));
 			CategoryAndArticle caa = new CategoryAndArticle(articleId, categoryName);
-			System.out.println(caa);
 			categoryAndArticleList.add(caa);
 		}
 	}
@@ -168,10 +166,4 @@ public class CSDNSpider implements ISpider {
 		return categoryAndArticleList;
 	}
 
-	@Test
-	public void test() {
-		CSDNSpider spider = new CSDNSpider("lc0817");
-		String articleContent = spider.getArticleContent(51474157);
-		System.out.println(articleContent);
-	}
 }

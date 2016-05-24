@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -30,6 +31,9 @@ import leo.mapper.ICategoryAndArticleMapper;
 import leo.mapper.ICategoryMapper;
 import leo.spider.CSDNSpider;
 import leo.util.SpiderUtil;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * @Description:
@@ -153,5 +157,46 @@ public class MyTest {
 		CSDNSpider spider = new CSDNSpider("lc0817");
 		String articleContent = spider.getArticleContent(51474157);
 		// System.out.println(articleContent);
+	}
+
+	public static <T> List<T> reverse(List<T> list) {
+		int size = list.size();
+		List<T> newList = new ArrayList<>(size);
+		for (int i = size - 1; i >= 0; i--) {
+			newList.add(list.get(i));
+		}
+		return newList;
+	}
+
+	@Test
+	public void test09() throws IOException {
+		String resource = "leo/config/mybatis-config.xml";
+		InputStream inputStream = Resources.getResourceAsStream(resource);
+		SqlSessionFactory ssf = new SqlSessionFactoryBuilder().build(inputStream);
+		SqlSession session = ssf.openSession(true);
+
+		String data = leo.util.FileReader.read("C://articleJSON.json");
+		List<Article> list = JSON.parseArray(data, Article.class);
+
+		IArticleMapper articleMapper = session.getMapper(IArticleMapper.class);
+		int count = articleMapper.insertList(list);
+		System.out.println(count);
+
+	}
+
+	@Test
+	public void test10() throws IOException {
+		JedisPoolConfig cfg = new JedisPoolConfig();
+		JedisPool pool = new JedisPool(cfg, "127.0.0.1");
+		Jedis jedis = null;
+		try {
+			jedis = pool.getResource();
+			jedis.set("testkey01", "testvalue01");
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		pool.close();
 	}
 }
